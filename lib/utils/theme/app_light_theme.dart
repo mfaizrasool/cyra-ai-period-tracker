@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 final lightTheme = ThemeData.light().copyWith(
   brightness: Brightness.light,
-  cardColor: const Color(0xfff5f6f8),
+  cardColor: const Color(0xFFFFF2F5),
   colorScheme: ThemeData.light().colorScheme.copyWith(
     primary: AppColors.primaryColor,
     surface: AppLightThemeColors.appBackgroundColor,

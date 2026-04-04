@@ -23,9 +23,13 @@ class AppPreferencesController extends GetxController {
 
   ///
 
+  /// Removes every key from SharedPreferences (all app settings and stored values).
   Future<void> clearData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    try {
+      this.prefs = prefs;
+    } catch (_) {}
   }
 
   Future<void> setString({required String key, required String value}) async {

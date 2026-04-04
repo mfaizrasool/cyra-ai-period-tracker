@@ -5,7 +5,15 @@ class AppPreferenceLabels {
   static const String userEmail = "bg39Mq";
   static const String userTheme = "nh0Wx";
   static const String photosGridCount = "ph0Gr1d";
-  
+  static const String isOnboardingComplete = "is_onboarding_complete";
+  static const String lastPeriodStartDate = "last_period_start_date";
+  static const String avgCycleLength = "avg_cycle_length";
+  static const String avgPeriodLength = "avg_period_length";
+
+  static const String reminderPeriodEnabled = "reminder_period_enabled";
+  static const String reminderDailyLogEnabled = "reminder_daily_log_enabled";
+  static const String reminderDaysBeforePeriod = "reminder_days_before_period";
+
   // Auto-sync preferences
   static const String autoSyncEnabled = "auto_sync_enabled";
   static const String syncOnWifiOnly = "sync_on_wifi_only";

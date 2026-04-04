@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "665201066495",
+    "project_id": "cyra---ai-period-tracker",
+    "storage_bucket": "cyra---ai-period-tracker.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665201066495:android:527f828d57347515cf27ca",
+        "android_client_info": {
+          "package_name": "com.example.cyra.ai.period.tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmCHm2XN22j7rTJz4cmte-7HrY53mVBe0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
