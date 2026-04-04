@@ -21,8 +21,9 @@ class ExportService {
     buf.writeln('--- Daily logs ---');
 
     for (final d in daily) {
+      final pain = d.painLevel != null ? 'pain=${d.painLevel}' : 'pain=-';
       buf.writeln(
-        '${d.date.toIso8601String().split('T').first} | mood=${d.mood} | symptoms=${d.symptoms} | notes=${d.notes}',
+        '${d.date.toIso8601String().split('T').first} | mood=${d.mood} | symptoms=${d.symptoms} | $pain | notes=${d.notes}',
       );
     }
 

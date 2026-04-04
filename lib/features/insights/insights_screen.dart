@@ -29,7 +29,47 @@ class InsightsScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
               children: [
-                Text('Your averages', style: theme.textTheme.titleMedium),
+                Card(
+                  elevation: 0,
+                  color: AppColors.insightColor.withValues(alpha: 0.08),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: AppColors.insightColor.withValues(alpha: 0.2)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(14),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.edit_note_outlined, color: theme.primaryColor, size: 22),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Daily log → Insights',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                insights.dailyLogEntryCount.value == 0
+                                    ? 'Save symptoms, mood, pain, or notes on the Log tab; they show in the sections below.'
+                                    : '${insights.dailyLogEntryCount.value} days with saved log entries. '
+                                        'Pain, symptoms, and mood summaries update here.',
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text('Cycle overview', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -53,26 +93,64 @@ class InsightsScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                Text('Cycle regularity', style: theme.textTheme.titleMedium),
+                Text('From your daily logs', style: theme.textTheme.titleMedium),
+                const SizedBox(height: 4),
+                Text(
+                  'Logged on the Log tab',
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                ),
                 const SizedBox(height: 12),
+                Text('Pain', style: theme.textTheme.titleSmall),
+                const SizedBox(height: 8),
                 Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: theme.dividerColor),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text(
-                      insights.regularityLabel.value,
-                      style: theme.textTheme.bodyMedium,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.monitor_heart_outlined, color: theme.primaryColor),
+                        const SizedBox(width: 12),
+                        Expanded(child: Text(insights.painSummaryLabel.value)),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                Text('Common symptoms', style: theme.textTheme.titleMedium),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
+                Text('Mood', style: theme.textTheme.titleSmall),
+                const SizedBox(height: 8),
+                if (insights.topMoods.isEmpty)
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        'No moods logged yet. Choose a mood on the Log tab when you save an entry.',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  )
+                else
+                  ...insights.topMoods.map(
+                    (s) => Card(
+                      child: ListTile(
+                        leading: Icon(Icons.mood_outlined, color: theme.primaryColor),
+                        title: Text(s),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                Text('Symptoms', style: theme.textTheme.titleSmall),
+                const SizedBox(height: 8),
                 if (insights.topSymptoms.isEmpty)
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text(
-                        'No symptoms logged yet. Add them on the Log tab.',
+                        'No symptoms logged yet. Tap symptoms on the Log tab when you save.',
                         style: theme.textTheme.bodyMedium,
                       ),
                     ),
@@ -86,6 +164,23 @@ class InsightsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                const SizedBox(height: 24),
+                Text('Cycle regularity', style: theme.textTheme.titleMedium),
+                const SizedBox(height: 4),
+                Text(
+                  'From period flow you log on Home / Calendar',
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                ),
+                const SizedBox(height: 12),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      insights.regularityLabel.value,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

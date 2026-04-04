@@ -2,9 +2,13 @@ import 'package:cyra_ai_period_tracker/core/services/cycle_prediction_service.da
 import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
 import 'package:cyra_ai_period_tracker/data/models/period_log.dart';
 import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
+import 'package:cyra_ai_period_tracker/features/home/period_flow_sheet.dart';
+import 'package:cyra_ai_period_tracker/features/home/shell_nav_controller.dart';
+import 'package:cyra_ai_period_tracker/features/log/log_controller.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -112,6 +116,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     }
     final bleeding = (log?.flowLevel ?? 0) > 0;
     final flowNames = ['None', 'Spotting', 'Light', 'Medium', 'Heavy'];
+    final cycle = Get.find<CycleController>();
+    final shellNav = Get.find<ShellNavController>();
 
     await showModalBottomSheet<void>(
       context: context,
@@ -122,25 +128,46 @@ class _CalendarScreenState extends State<CalendarScreen> {
             padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}',
-                  style: Theme.of(ctx).textTheme.titleMedium,
+                  DateFormat('EEEE, MMMM d, y').format(d),
+                  style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   bleeding
-                      ? 'Logged bleeding: ${flowNames[(log?.flowLevel ?? 0).clamp(0, flowNames.length - 1)]}.'
+                      ? 'Bleeding: ${flowNames[(log?.flowLevel ?? 0).clamp(0, flowNames.length - 1)]}.'
                       : 'No bleeding logged for this day.',
+                  style: Theme.of(ctx).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    child: const Text('Close'),
-                  ),
+                const SizedBox(height: 20),
+                FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    showPeriodFlowSheet(context, cycle, date: d);
+                  },
+                  icon: const Icon(Icons.water_drop_outlined),
+                  label: const Text('Log or edit flow'),
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    if (Get.isRegistered<LogController>()) {
+                      Get.find<LogController>().changeDate(d);
+                    }
+                    shellNav.goToTab(2);
+                  },
+                  icon: const Icon(Icons.edit_note_outlined),
+                  label: const Text('Open daily log'),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Close'),
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
 import 'package:cyra_ai_period_tracker/features/home/home_shell_screen.dart';
 import 'package:cyra_ai_period_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:cyra_ai_period_tracker/features/profile/reminders_screen.dart';
+import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/theme_controller.dart';
 import 'package:cyra_ai_period_tracker/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -25,20 +26,52 @@ class ProfileScreen extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 20),
-          const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 40)),
-          const SizedBox(height: 16),
-          const Center(
-            child: Text(
-              'Cyra',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primaryColor.withValues(
+                      alpha: Theme.of(context).brightness == Brightness.dark ? 0.28 : 0.2,
+                    ),
+                    Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                  ],
+                ),
+                border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.12)),
+              ),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 44,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    child: Icon(Icons.person_rounded, size: 44, color: AppColors.primaryColor),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Cyra',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Private, on-device cycle tracking',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).hintColor,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          const Center(
-            child: Text('Private, on-device cycle tracking'),
-          ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
 
           _SectionHeader(title: 'Cycle'),
           ListTile(

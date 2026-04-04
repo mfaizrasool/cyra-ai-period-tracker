@@ -1,4 +1,7 @@
+import 'package:cyra_ai_period_tracker/core/cycle/cycle_phase_helper.dart';
+import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
 import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
+import 'package:cyra_ai_period_tracker/features/home/period_flow_sheet.dart';
 import 'package:cyra_ai_period_tracker/features/home/shell_nav_controller.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:cyra_ai_period_tracker/widgets/primary_button.dart';
@@ -8,8 +11,6 @@ import 'package:intl/intl.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  static const _flowLabels = ['None', 'Spotting', 'Light', 'Medium', 'Heavy'];
 
   @override
   Widget build(BuildContext context) {
@@ -21,174 +22,383 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Cyra'),
         centerTitle: true,
+        scrolledUnderElevation: 0,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Obx(() {
-            final nextDate = controller.nextPeriodDate.value;
-            final daysUntil = controller.daysUntilNextPeriod.value;
-            final cycleDay = controller.cycleDay.value;
-            final periodBleedDay = controller.periodDayInBleeding.value;
+        child: Obx(() {
+          final nextDate = controller.nextPeriodDate.value;
+          final daysUntil = controller.daysUntilNextPeriod.value;
+          final cycleDay = controller.cycleDay.value;
+          final periodBleedDay = controller.periodDayInBleeding.value;
+          final ov = controller.ovulationDate.value;
+          final today = dateOnly(DateTime.now());
+          final daysUntilOv = calendarDaysBetween(ov, today);
 
-            final headline = periodBleedDay != null
-                ? 'Period day $periodBleedDay'
-                : 'Cycle day $cycleDay';
+          final headline = periodBleedDay != null
+              ? 'Period day $periodBleedDay'
+              : 'Cycle day $cycleDay';
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  DateFormat('EEEE, MMMM d').format(DateTime.now()),
-                  style: theme.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 4),
-                Text(headline, style: theme.textTheme.titleLarge),
-                const SizedBox(height: 16),
-                Card(
+          final phase = CyclePhaseInfo.resolve(
+            today: today,
+            ovulationDate: ov,
+            fertileWindow: controller.fertileWindow.toList(),
+            periodDayInBleeding: periodBleedDay,
+          );
+
+          return RefreshIndicator(
+            onRefresh: () => controller.loadData(),
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: _HeroHeader(
+                      headline: headline,
+                      dateLine: DateFormat('EEEE, MMMM d').format(DateTime.now()),
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: Row(
                       children: [
-                        Text(
-                          daysUntil > 0
-                              ? 'Next period in $daysUntil days'
-                              : daysUntil == 0
-                                  ? 'Period expected today'
-                                  : 'Period is late by ${-daysUntil} days',
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Expected on ${DateFormat('MMM d').format(nextDate)}',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                        if (periodBleedDay != null) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            'You logged bleeding today — predictions update as you log.',
-                            style: theme.textTheme.bodySmall,
+                        Expanded(
+                          child: _StatTile(
+                            icon: Icons.water_drop_outlined,
+                            color: AppColors.periodColor,
+                            label: daysUntil > 0
+                                ? 'Next period'
+                                : daysUntil == 0
+                                    ? 'Period'
+                                    : 'Late',
+                            value: daysUntil > 0
+                                ? '$daysUntil d'
+                                : daysUntil == 0
+                                    ? 'Today'
+                                    : '${-daysUntil} d',
+                            caption: DateFormat('MMM d').format(nextDate),
                           ),
-                        ],
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            _legendDot(AppColors.periodColor, 'Period'),
-                            const SizedBox(width: 12),
-                            _legendDot(AppColors.fertileColor, 'Fertile'),
-                            const SizedBox(width: 12),
-                            _legendDot(AppColors.ovulationColor, 'Ovulation'),
-                          ],
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _StatTile(
+                            icon: Icons.bubble_chart_outlined,
+                            color: AppColors.ovulationColor,
+                            label: 'Ovulation',
+                            value: daysUntilOv > 0
+                                ? '$daysUntilOv d'
+                                : daysUntilOv == 0
+                                    ? 'Today'
+                                    : '—',
+                            caption: daysUntilOv < 0 ? 'Passed' : DateFormat('MMM d').format(ov),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: PrimaryButton(
-                        title: 'Log period',
-                        onPressed: () => _showFlowPicker(context, controller),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: PrimaryButton(
-                        title: 'Symptoms',
-                        onPressed: () => shellNav.goToTab(2),
-                        backgroundColor: theme.colorScheme.secondaryContainer,
-                        titleColor: theme.colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ],
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: _PhaseTipCard(phase: phase),
+                  ),
                 ),
-                const SizedBox(height: 14),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.auto_awesome_outlined),
-                    title: const Text('Smart insight'),
-                    subtitle: Text(
-                      'Next period estimate uses your ${controller.avgCycleLength.value}-day cycle '
-                      'and last logged bleeding start.',
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Card(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: theme.dividerColor),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.event_repeat, color: theme.primaryColor, size: 22),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    daysUntil > 0
+                                        ? 'Next period in $daysUntil days'
+                                        : daysUntil == 0
+                                            ? 'Period expected today'
+                                            : 'Period is late by ${-daysUntil} days',
+                                    style: theme.textTheme.titleMedium?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Expected on ${DateFormat('MMMM d, y').format(nextDate)}',
+                              style: theme.textTheme.bodyMedium,
+                            ),
+                            if (periodBleedDay != null) ...[
+                              const SizedBox(height: 10),
+                              Text(
+                                'You logged bleeding today — predictions update as you log.',
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                            const SizedBox(height: 16),
+                            Wrap(
+                              spacing: 16,
+                              runSpacing: 8,
+                              children: [
+                                _homeLegendDot(AppColors.periodColor, 'Period'),
+                                _homeLegendDot(AppColors.fertileColor, 'Fertile'),
+                                _homeLegendDot(AppColors.ovulationColor, 'Ovulation'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => shellNav.goToTab(3),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: PrimaryButton(
+                            title: 'Log period',
+                            onPressed: () => showPeriodFlowSheet(context, controller),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: PrimaryButton(
+                            title: 'Daily log',
+                            onPressed: () => shellNav.goToTab(2),
+                            backgroundColor: theme.colorScheme.secondaryContainer,
+                            titleColor: theme.colorScheme.onSecondaryContainer,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                    child: Material(
+                      color: theme.cardColor,
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(16),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () => shellNav.goToTab(3),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: AppColors.insightColor.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Icon(Icons.auto_awesome_outlined, color: AppColors.insightColor),
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Insights',
+                                      style: theme.textTheme.titleSmall?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Averages use your ${controller.avgCycleLength.value}-day cycle '
+                                      'and last logged bleeding start.',
+                                      style: theme.textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(Icons.chevron_right, color: theme.hintColor),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
+}
 
-  Future<void> _showFlowPicker(BuildContext context, CycleController controller) async {
-    var level = 3;
-    await showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: StatefulBuilder(
-            builder: (context, setSt) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text('Flow for today', style: Theme.of(ctx).textTheme.titleMedium),
-                  const SizedBox(height: 12),
-                  DropdownButtonFormField<int>(
-                    key: ValueKey(level),
-                    initialValue: level,
-                    decoration: const InputDecoration(labelText: 'Flow'),
-                    items: List.generate(
-                      _flowLabels.length,
-                      (i) => DropdownMenuItem(value: i, child: Text(_flowLabels[i])),
-                    ),
-                    onChanged: (v) => setSt(() => level = v ?? 3),
-                  ),
-                  const SizedBox(height: 20),
-                  PrimaryButton(
-                    title: 'Save',
-                    width: double.infinity,
-                    onPressed: () async {
-                      Navigator.pop(ctx);
-                      await controller.logPeriodDay(DateTime.now(), level);
-                      Get.snackbar(
-                        'Saved',
-                        level == 0
-                            ? 'Updated for today.'
-                            : 'Period logged for today.',
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
+Widget _homeLegendDot(Color color, String label) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+      const SizedBox(width: 6),
+      Text(label, style: const TextStyle(fontSize: 13)),
+    ],
+  );
+}
+
+class _HeroHeader extends StatelessWidget {
+  const _HeroHeader({required this.headline, required this.dateLine});
+
+  final String headline;
+  final String dateLine;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryColor.withValues(alpha: theme.brightness == Brightness.dark ? 0.35 : 0.22),
+            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            theme.colorScheme.surface,
+          ],
+        ),
+        border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hello',
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: theme.hintColor,
+              letterSpacing: 0.5,
+            ),
           ),
-        );
-      },
+          const SizedBox(height: 4),
+          Text(dateLine, style: theme.textTheme.bodyMedium),
+          const SizedBox(height: 12),
+          Text(
+            headline,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
+}
 
-  Widget _legendDot(Color color, String label) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 4),
-        Text(label),
-      ],
+class _StatTile extends StatelessWidget {
+  const _StatTile({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.value,
+    required this.caption,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String label;
+  final String value;
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: color.withValues(alpha: 0.08),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 10),
+          Text(label, style: theme.textTheme.labelSmall?.copyWith(color: theme.hintColor)),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(caption, style: theme.textTheme.bodySmall),
+        ],
+      ),
+    );
+  }
+}
+
+class _PhaseTipCard extends StatelessWidget {
+  const _PhaseTipCard({required this.phase});
+
+  final CyclePhaseInfo phase;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: phase.accentColor.withValues(alpha: 0.07),
+        border: Border.all(color: phase.accentColor.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.spa_outlined, color: phase.accentColor, size: 22),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  phase.title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: phase.accentColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(phase.subtitle, style: theme.textTheme.bodyMedium),
+        ],
+      ),
     );
   }
 }

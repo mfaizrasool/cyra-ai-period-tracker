@@ -10,11 +10,16 @@ class InsightsController extends GetxController {
 
   final RxString regularityLabel = ''.obs;
   final RxList<String> topSymptoms = <String>[].obs;
+  final RxList<String> topMoods = <String>[].obs;
+  final RxString painSummaryLabel = ''.obs;
+  /// Days with any daily log row (symptoms, mood, notes, or pain).
+  final RxInt dailyLogEntryCount = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
     regularityLabel.value = 'Loading insights…';
+    painSummaryLabel.value = 'Loading…';
     load();
   }
 
@@ -32,6 +37,34 @@ class InsightsController extends GetxController {
     final sorted = counts.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
     topSymptoms.assignAll(sorted.take(5).map((e) => '${e.key} (${e.value}×)').toList());
+
+    final moodCounts = <String, int>{};
+    for (final row in daily) {
+      final m = row.mood.trim();
+      if (m.isEmpty) continue;
+      moodCounts[m] = (moodCounts[m] ?? 0) + 1;
+    }
+    final moodsSorted = moodCounts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    topMoods.assignAll(moodsSorted.take(5).map((e) => '${e.key} (${e.value}×)').toList());
+
+    dailyLogEntryCount.value = daily.where((d) {
+      final hasSymptoms = d.symptoms.trim().isNotEmpty;
+      final hasMood = d.mood.trim().isNotEmpty;
+      final hasNotes = d.notes.trim().isNotEmpty;
+      final hasPain = d.painLevel != null;
+      return hasSymptoms || hasMood || hasNotes || hasPain;
+    }).length;
+
+    final withPain = daily.where((d) => d.painLevel != null).toList();
+    if (withPain.isEmpty) {
+      painSummaryLabel.value = 'Log pain levels on the Log tab to see averages here.';
+    } else {
+      final sum = withPain.fold<double>(0, (a, d) => a + (d.painLevel ?? 0));
+      final avg = sum / withPain.length;
+      painSummaryLabel.value =
+          'Average pain when logged: ${avg.toStringAsFixed(1)} / 10 (over ${withPain.length} days).';
+    }
 
     final periods = await _db.getAllPeriodLogs();
     final bleeding = periods.where((p) => p.flowLevel > 0).toList();

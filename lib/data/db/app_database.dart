@@ -20,7 +20,12 @@ class AppDatabase {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return openDatabase(path, version: 1, onCreate: _createDB);
+    return openDatabase(
+      path,
+      version: 2,
+      onCreate: _createDB,
+      onUpgrade: _upgradeDB,
+    );
   }
 
   static const String _dbFileName = 'cyra_db.db';
@@ -52,9 +57,16 @@ class AppDatabase {
         date TEXT NOT NULL,
         symptoms TEXT NOT NULL,
         mood TEXT NOT NULL,
-        notes TEXT NOT NULL
+        notes TEXT NOT NULL,
+        pain_level INTEGER
       )
     ''');
+  }
+
+  Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE daily_logs ADD COLUMN pain_level INTEGER');
+    }
   }
 
   /// One row per calendar day: replaces any existing row for that day.
@@ -111,6 +123,7 @@ class AppDatabase {
       symptoms: log.symptoms,
       mood: log.mood,
       notes: log.notes,
+      painLevel: log.painLevel,
     );
     final map = normalized.toMap()..remove('id');
     final id = await db.insert('daily_logs', map);
@@ -120,6 +133,7 @@ class AppDatabase {
       symptoms: normalized.symptoms,
       mood: normalized.mood,
       notes: normalized.notes,
+      painLevel: normalized.painLevel,
     );
   }
 

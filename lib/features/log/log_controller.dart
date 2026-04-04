@@ -12,9 +12,18 @@ class LogController extends GetxController {
 
   RxString selectedMood = ''.obs;
   RxList<String> selectedSymptoms = <String>[].obs;
+
+  /// 0–10; null means not set for this entry.
+  final Rxn<int> painLevel = Rxn<int>();
   final notesController = TextEditingController();
 
-  final List<String> moodOptions = ['Happy', 'Calm', 'Irritated', 'Sad', 'Anxious'];
+  final List<String> moodOptions = [
+    'Happy',
+    'Calm',
+    'Irritated',
+    'Sad',
+    'Anxious',
+  ];
   final List<String> symptomOptions = [
     'Cramps',
     'Headache',
@@ -43,16 +52,18 @@ class LogController extends GetxController {
     final log = await _db.getDailyLogForDate(date);
     if (log != null) {
       selectedMood.value = log.mood;
+      painLevel.value = log.painLevel;
       selectedSymptoms.value = log.symptoms.isEmpty
           ? <String>[]
           : log.symptoms
-              .split(',')
-              .map((e) => e.trim())
-              .where((e) => e.isNotEmpty)
-              .toList();
+                .split(',')
+                .map((e) => e.trim())
+                .where((e) => e.isNotEmpty)
+                .toList();
       notesController.text = log.notes;
     } else {
       selectedMood.value = '';
+      painLevel.value = null;
       selectedSymptoms.clear();
       notesController.clear();
     }
@@ -75,18 +86,27 @@ class LogController extends GetxController {
     }
   }
 
+  void setPainLevel(int? value) {
+    painLevel.value = value;
+  }
+
   Future<void> saveLog() async {
     final log = DailyLog(
       date: selectedDate.value,
       symptoms: selectedSymptoms.join(','),
       mood: selectedMood.value,
       notes: notesController.text,
+      painLevel: painLevel.value,
     );
     await _db.upsertDailyLog(log);
     if (Get.isRegistered<InsightsController>()) {
       await Get.find<InsightsController>().load();
     }
-    Get.snackbar('Saved', 'Your log has been saved.', snackPosition: SnackPosition.BOTTOM);
+    Get.snackbar(
+      'Saved',
+      'Your log has been saved.',
+      snackPosition: SnackPosition.BOTTOM,
+    );
   }
 
   @override
