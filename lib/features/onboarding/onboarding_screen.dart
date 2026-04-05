@@ -288,7 +288,6 @@ class _WelcomeOnboardingPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyLarge?.copyWith(
                               height: 1.45,
-                              color: theme.textTheme.bodySmall?.color,
                             ),
                           ),
                           const SizedBox(height: 28),
@@ -313,7 +312,6 @@ class _WelcomeOnboardingPage extends StatelessWidget {
                           Text(
                             '4 quick steps · about a minute',
                             style: theme.textTheme.labelMedium?.copyWith(
-                              color: theme.hintColor,
                               letterSpacing: 0.2,
                             ),
                           ),
@@ -483,7 +481,6 @@ class _OnboardingStepShell extends StatelessWidget {
                       child: Text(
                         'Step $stepNumber of $totalSteps',
                         style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.hintColor,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.4,
                         ),
@@ -503,10 +500,7 @@ class _OnboardingStepShell extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 subtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.45,
-                  color: theme.textTheme.bodySmall?.color,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(height: 1.45),
               ),
               if (recap != null) ...[const SizedBox(height: 16), recap!],
               const SizedBox(height: 12),
@@ -515,10 +509,7 @@ class _OnboardingStepShell extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   footerHint!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    height: 1.35,
-                    color: theme.hintColor,
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(height: 1.35),
                 ),
               ],
             ],
@@ -596,12 +587,7 @@ class _SetupRecapCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.hintColor,
-                ),
-              ),
+              Text(label, style: theme.textTheme.labelSmall?.copyWith()),
               Text(
                 value,
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -657,9 +643,7 @@ class _DateOnboardingBody extends StatelessWidget {
                     children: [
                       Text(
                         'Selected start day',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.hintColor,
-                        ),
+                        style: theme.textTheme.labelSmall?.copyWith(),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -729,9 +713,7 @@ class _StepperNumberPicker extends StatelessWidget {
           children: [
             Text(
               '$min–$max $suffix',
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: theme.hintColor,
-              ),
+              style: theme.textTheme.labelMedium?.copyWith(),
             ),
             const SizedBox(height: 20),
             Row(
@@ -757,9 +739,7 @@ class _StepperNumberPicker extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         suffix,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: theme.hintColor,
-                        ),
+                        style: theme.textTheme.titleMedium?.copyWith(),
                       ),
                     ],
                   ),
