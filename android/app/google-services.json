@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:665201066495:android:527f828d57347515cf27ca",
+        "mobilesdk_app_id": "1:665201066495:android:21f07d95fa1fc023cf27ca",
         "android_client_info": {
-          "package_name": "com.example.cyra.ai.period.tracker"
+          "package_name": "com.cyra.ai.period.tracker"
         }
       },
       "oauth_client": [],

@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBmCHm2XN22j7rTJz4cmte-7HrY53mVBe0',
-    appId: '1:665201066495:android:527f828d57347515cf27ca',
+    appId: '1:665201066495:android:21f07d95fa1fc023cf27ca',
     messagingSenderId: '665201066495',
     projectId: 'cyra---ai-period-tracker',
     storageBucket: 'cyra---ai-period-tracker.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCSFLCXnz9wyJ1i9UbxxqB4catBkM6K_lc',
-    appId: '1:665201066495:ios:3ea3280ec1b0055acf27ca',
+    appId: '1:665201066495:ios:91099db3844393ebcf27ca',
     messagingSenderId: '665201066495',
     projectId: 'cyra---ai-period-tracker',
     storageBucket: 'cyra---ai-period-tracker.firebasestorage.app',
-    iosBundleId: 'com.example.cyra.ai.period.tracker',
+    iosBundleId: 'com.cyra.ai.period.tracker',
   );
+
 }

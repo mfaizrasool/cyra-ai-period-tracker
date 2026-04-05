@@ -1,4 +1,4 @@
-package com.example.cyra.ai.period.tracker
+package com.cyra.ai.period.tracker
 
 import io.flutter.embedding.android.FlutterActivity
 

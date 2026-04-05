@@ -1,13 +1,14 @@
 import 'dart:developer';
 
+import 'package:cyra_ai_period_tracker/common/controllers/notification_setup.dart';
 import 'package:cyra_ai_period_tracker/common/controllers/preference_controller.dart';
 import 'package:cyra_ai_period_tracker/features/home/home_shell_screen.dart';
 import 'package:cyra_ai_period_tracker/features/onboarding/onboarding_screen.dart';
+import 'package:cyra_ai_period_tracker/firebase_options.dart';
 import 'package:cyra_ai_period_tracker/utils/preference_labels.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/app_dark_theme.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/app_light_theme.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/theme_controller.dart';
-import 'package:cyra_ai_period_tracker/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -17,7 +18,9 @@ import 'package:get/get.dart';
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (_) {
     // Firebase may already be initialized in the background isolate.
   }
@@ -31,7 +34,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   } catch (e) {
     if (kDebugMode) {
@@ -66,6 +71,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _bootstrap();
+    notificationSetup(context);
+  }
+
+  void notificationSetup(BuildContext context) {
+    final notifier = NotificationSetup();
+    notifier.requestNotificationPermission();
+    notifier.firebaseNotificationInit(context);
+    notifier.setupInteractMessages(context);
   }
 
   Future<void> _bootstrap() async {
