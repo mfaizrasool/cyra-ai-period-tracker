@@ -33,23 +33,16 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primaryColor.withValues(
-                      alpha: Theme.of(context).brightness == Brightness.dark ? 0.28 : 0.2,
-                    ),
-                    Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                  ],
+                color: AppColors.insightColor.withValues(alpha: 0.08),
+                border: Border.all(
+                  color: AppColors.insightColor.withValues(alpha: 0.2),
                 ),
-                border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.12)),
               ),
               child: Column(
                 children: [
                   CircleAvatar(
                     radius: 44,
-                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    backgroundColor: AppColors.white,
                     child: Icon(Icons.person_rounded, size: 44, color: AppColors.primaryColor),
                   ),
                   const SizedBox(height: 14),
@@ -57,13 +50,14 @@ class ProfileScreen extends StatelessWidget {
                     'Cyra',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Private, on-device cycle tracking',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).hintColor,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                     textAlign: TextAlign.center,
                   ),
@@ -141,9 +135,19 @@ class ProfileScreen extends StatelessWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () async {
               try {
-                await ExportService().shareHealthExport();
+                final size = MediaQuery.sizeOf(context);
+                final padding = MediaQuery.paddingOf(context);
+                // iPad/macOS: popover must anchor to a rect or share can fail.
+                final origin = Rect.fromCenter(
+                  center: Offset(size.width / 2, padding.top + 140),
+                  width: 80,
+                  height: 48,
+                );
+                await ExportService().shareHealthExport(
+                  sharePositionOrigin: origin,
+                );
               } catch (e) {
-                Get.snackbar('Export', 'Could not open share sheet: $e');
+                Get.snackbar('Export', 'Could not share: $e');
               }
             },
           ),

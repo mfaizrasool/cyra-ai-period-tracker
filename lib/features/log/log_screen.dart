@@ -1,5 +1,6 @@
 import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
 import 'package:cyra_ai_period_tracker/features/log/log_controller.dart';
+import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:cyra_ai_period_tracker/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +120,9 @@ class LogScreen extends StatelessWidget {
                           ),
                           Text(
                             '0 = none · 10 = worst — optional; helps spot patterns in Insights.',
-                            style: theme.textTheme.bodySmall,
+                            style: AppTextStyle.bodyMedium.copyWith(
+                              color: theme.colorScheme.onSurface,
+                            ),
                           ),
                         ],
                       );

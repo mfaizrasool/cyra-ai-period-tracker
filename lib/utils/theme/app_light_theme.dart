@@ -4,15 +4,18 @@ import 'package:cyra_ai_period_tracker/utils/theme/extension/theme_extension.dar
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+final ColorScheme _lightColorScheme = ThemeData.light().colorScheme.copyWith(
+  primary: AppColors.primaryColor,
+  surface: AppLightThemeColors.appBackgroundColor,
+  onSurface: AppLightThemeColors.primaryTextColor,
+  secondaryContainer: AppLightThemeColors.lightGreyColor,
+  primaryContainer: AppColors.greyColor,
+);
+
 final lightTheme = ThemeData.light().copyWith(
   brightness: Brightness.light,
   cardColor: const Color(0xFFFFF2F5),
-  colorScheme: ThemeData.light().colorScheme.copyWith(
-    primary: AppColors.primaryColor,
-    surface: AppLightThemeColors.appBackgroundColor,
-    secondaryContainer: AppLightThemeColors.lightGreyColor,
-    primaryContainer: AppColors.greyColor,
-  ),
+  colorScheme: _lightColorScheme,
   dividerColor: const Color(0xFFEBEDF1),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: AppLightThemeColors.bottomSheetColor,
@@ -26,24 +29,30 @@ final lightTheme = ThemeData.light().copyWith(
   textTheme: TextTheme(
     bodyLarge: AppTextStyle.bodyLarge.copyWith(
       fontSize: 16.0,
-      color: AppLightThemeColors.primaryTextColor,
+      color: _lightColorScheme.onSurface,
     ),
     bodyMedium: AppTextStyle.bodyMedium.copyWith(
-      color: AppLightThemeColors.primaryTextColor,
+      color: _lightColorScheme.onSurface,
     ),
     bodySmall: AppTextStyle.bodySmall.copyWith(
-      color: AppColors.greyColor,
+      color: _lightColorScheme.onSurface,
       fontSize: 14.0,
     ),
+    labelSmall: AppTextStyle.bodySmall.copyWith(
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0.2,
+      color: _lightColorScheme.onSurface,
+    ),
     titleLarge: AppTextStyle.titleLarge.copyWith(
-      color: AppLightThemeColors.primaryTextColor,
+      color: _lightColorScheme.onSurface,
     ),
     titleMedium: AppTextStyle.titleMedium.copyWith(
-      color: AppLightThemeColors.primaryTextColor,
+      color: _lightColorScheme.onSurface,
     ),
     titleSmall: AppTextStyle.titleSmall.copyWith(
       fontWeight: FontWeight.bold,
-      color: AppLightThemeColors.primaryTextColor,
+      color: _lightColorScheme.onSurface,
     ),
   ),
   appBarTheme: AppBarTheme(

@@ -1,5 +1,6 @@
 import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
 import 'package:cyra_ai_period_tracker/features/insights/insights_controller.dart';
+import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,10 +15,7 @@ class InsightsScreen extends StatelessWidget {
     final insights = Get.find<InsightsController>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Insights'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Insights'), centerTitle: true),
       body: SafeArea(
         child: Obx(
           () => RefreshIndicator(
@@ -34,14 +32,20 @@ class InsightsScreen extends StatelessWidget {
                   color: AppColors.insightColor.withValues(alpha: 0.08),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
-                    side: BorderSide(color: AppColors.insightColor.withValues(alpha: 0.2)),
+                    side: BorderSide(
+                      color: AppColors.insightColor.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(14),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.edit_note_outlined, color: theme.primaryColor, size: 22),
+                        Icon(
+                          Icons.edit_note_outlined,
+                          color: theme.primaryColor,
+                          size: 22,
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Column(
@@ -58,8 +62,10 @@ class InsightsScreen extends StatelessWidget {
                                 insights.dailyLogEntryCount.value == 0
                                     ? 'Save symptoms, mood, pain, or notes on the Log tab; they show in the sections below.'
                                     : '${insights.dailyLogEntryCount.value} days with saved log entries. '
-                                        'Pain, symptoms, and mood summaries update here.',
-                                style: theme.textTheme.bodySmall,
+                                          'Pain, symptoms, and mood summaries update here.',
+                                style: AppTextStyle.bodyMedium.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                ),
                               ),
                             ],
                           ),
@@ -93,11 +99,16 @@ class InsightsScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                Text('From your daily logs', style: theme.textTheme.titleMedium),
+                Text(
+                  'From your daily logs',
+                  style: theme.textTheme.titleMedium,
+                ),
                 const SizedBox(height: 4),
                 Text(
                   'Logged on the Log tab',
-                  style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                  style: AppTextStyle.bodyMedium.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Text('Pain', style: theme.textTheme.titleSmall),
@@ -113,7 +124,10 @@ class InsightsScreen extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.monitor_heart_outlined, color: theme.primaryColor),
+                        Icon(
+                          Icons.monitor_heart_outlined,
+                          color: theme.primaryColor,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(child: Text(insights.painSummaryLabel.value)),
                       ],
@@ -137,7 +151,10 @@ class InsightsScreen extends StatelessWidget {
                   ...insights.topMoods.map(
                     (s) => Card(
                       child: ListTile(
-                        leading: Icon(Icons.mood_outlined, color: theme.primaryColor),
+                        leading: Icon(
+                          Icons.mood_outlined,
+                          color: theme.primaryColor,
+                        ),
                         title: Text(s),
                       ),
                     ),
@@ -159,7 +176,10 @@ class InsightsScreen extends StatelessWidget {
                   ...insights.topSymptoms.map(
                     (s) => Card(
                       child: ListTile(
-                        leading: Icon(Icons.healing_outlined, color: theme.primaryColor),
+                        leading: Icon(
+                          Icons.healing_outlined,
+                          color: theme.primaryColor,
+                        ),
                         title: Text(s),
                       ),
                     ),
@@ -169,7 +189,9 @@ class InsightsScreen extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'From period flow you log on Home / Calendar',
-                  style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                  style: AppTextStyle.bodyMedium.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Card(
@@ -224,12 +246,17 @@ class _InfoCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(unit, style: theme.textTheme.bodySmall),
+            Text(
+              unit,
+              style: AppTextStyle.bodyMedium.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(height: 8),
             Text(
               title,
-              style: theme.textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+              style: AppTextStyle.bodyMedium.copyWith(
+                color: theme.colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),

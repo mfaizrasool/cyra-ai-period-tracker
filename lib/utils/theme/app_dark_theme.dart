@@ -6,16 +6,19 @@ import 'package:flutter/material.dart';
 
 import 'extension/theme_extension.dart';
 
+final ColorScheme _darkColorScheme = ThemeData.dark().colorScheme.copyWith(
+  brightness: Brightness.dark,
+  primary: AppColors.primaryColor,
+  surface: AppDarkThemeColors.appBackgroundColor,
+  onSurface: AppDarkThemeColors.primaryTextColor,
+  secondaryContainer: AppDarkThemeColors.lightGreyColor,
+  primaryContainer: AppColors.greyColor,
+);
+
 final darkTheme = ThemeData.dark().copyWith(
   brightness: Brightness.dark,
   cardColor: AppDarkThemeColors.bottomSheetColor,
-  colorScheme: ThemeData.dark().colorScheme.copyWith(
-    brightness: Brightness.dark,
-    primary: AppColors.primaryColor,
-    surface: AppDarkThemeColors.appBackgroundColor,
-    secondaryContainer: AppDarkThemeColors.lightGreyColor,
-    primaryContainer: AppColors.greyColor,
-  ),
+  colorScheme: _darkColorScheme,
   dividerColor: const Color(0x7feeeff1),
   bottomSheetTheme: const BottomSheetThemeData(
     backgroundColor: AppDarkThemeColors.bottomSheetColor,
@@ -29,24 +32,30 @@ final darkTheme = ThemeData.dark().copyWith(
   textTheme: TextTheme(
     bodyLarge: AppTextStyle.bodyLarge.copyWith(
       fontSize: 16.0,
-      color: AppDarkThemeColors.primaryTextColor,
+      color: _darkColorScheme.onSurface,
     ),
     bodyMedium: AppTextStyle.bodyMedium.copyWith(
-      color: AppDarkThemeColors.primaryTextColor,
+      color: _darkColorScheme.onSurface,
     ),
     bodySmall: AppTextStyle.bodySmall.copyWith(
-      color: AppColors.greyColor,
+      color: _darkColorScheme.onSurface,
       fontSize: 14.0,
     ),
+    labelSmall: AppTextStyle.bodySmall.copyWith(
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0.2,
+      color: _darkColorScheme.onSurface,
+    ),
     titleLarge: AppTextStyle.titleLarge.copyWith(
-      color: AppDarkThemeColors.primaryTextColor,
+      color: _darkColorScheme.onSurface,
     ),
     titleMedium: AppTextStyle.titleMedium.copyWith(
-      color: AppDarkThemeColors.primaryTextColor,
+      color: _darkColorScheme.onSurface,
     ),
     titleSmall: AppTextStyle.titleSmall.copyWith(
       fontWeight: FontWeight.bold,
-      color: AppDarkThemeColors.primaryTextColor,
+      color: _darkColorScheme.onSurface,
     ),
   ),
   appBarTheme: AppBarTheme(

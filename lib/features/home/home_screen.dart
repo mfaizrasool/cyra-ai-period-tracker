@@ -3,6 +3,7 @@ import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
 import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
 import 'package:cyra_ai_period_tracker/features/home/period_flow_sheet.dart';
 import 'package:cyra_ai_period_tracker/features/home/shell_nav_controller.dart';
+import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:cyra_ai_period_tracker/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +56,9 @@ class HomeScreen extends StatelessWidget {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: _HeroHeader(
                       headline: headline,
-                      dateLine: DateFormat('EEEE, MMMM d').format(DateTime.now()),
+                      dateLine: DateFormat(
+                        'EEEE, MMMM d',
+                      ).format(DateTime.now()),
                     ),
                   ),
                 ),
@@ -71,13 +74,13 @@ class HomeScreen extends StatelessWidget {
                             label: daysUntil > 0
                                 ? 'Next period'
                                 : daysUntil == 0
-                                    ? 'Period'
-                                    : 'Late',
+                                ? 'Period'
+                                : 'Late',
                             value: daysUntil > 0
                                 ? '$daysUntil d'
                                 : daysUntil == 0
-                                    ? 'Today'
-                                    : '${-daysUntil} d',
+                                ? 'Today'
+                                : '${-daysUntil} d',
                             caption: DateFormat('MMM d').format(nextDate),
                           ),
                         ),
@@ -90,9 +93,11 @@ class HomeScreen extends StatelessWidget {
                             value: daysUntilOv > 0
                                 ? '$daysUntilOv d'
                                 : daysUntilOv == 0
-                                    ? 'Today'
-                                    : '—',
-                            caption: daysUntilOv < 0 ? 'Passed' : DateFormat('MMM d').format(ov),
+                                ? 'Today'
+                                : '—',
+                            caption: daysUntilOv < 0
+                                ? 'Passed'
+                                : DateFormat('MMM d').format(ov),
                           ),
                         ),
                       ],
@@ -121,18 +126,21 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.event_repeat, color: theme.primaryColor, size: 22),
+                                Icon(
+                                  Icons.event_repeat,
+                                  color: theme.primaryColor,
+                                  size: 22,
+                                ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     daysUntil > 0
                                         ? 'Next period in $daysUntil days'
                                         : daysUntil == 0
-                                            ? 'Period expected today'
-                                            : 'Period is late by ${-daysUntil} days',
-                                    style: theme.textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                        ? 'Period expected today'
+                                        : 'Period is late by ${-daysUntil} days',
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                 ),
                               ],
@@ -146,7 +154,9 @@ class HomeScreen extends StatelessWidget {
                               const SizedBox(height: 10),
                               Text(
                                 'You logged bleeding today — predictions update as you log.',
-                                style: theme.textTheme.bodySmall,
+                                style: AppTextStyle.bodyMedium.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                ),
                               ),
                             ],
                             const SizedBox(height: 16),
@@ -155,8 +165,14 @@ class HomeScreen extends StatelessWidget {
                               runSpacing: 8,
                               children: [
                                 _homeLegendDot(AppColors.periodColor, 'Period'),
-                                _homeLegendDot(AppColors.fertileColor, 'Fertile'),
-                                _homeLegendDot(AppColors.ovulationColor, 'Ovulation'),
+                                _homeLegendDot(
+                                  AppColors.fertileColor,
+                                  'Fertile',
+                                ),
+                                _homeLegendDot(
+                                  AppColors.ovulationColor,
+                                  'Ovulation',
+                                ),
                               ],
                             ),
                           ],
@@ -173,7 +189,8 @@ class HomeScreen extends StatelessWidget {
                         Expanded(
                           child: PrimaryButton(
                             title: 'Log period',
-                            onPressed: () => showPeriodFlowSheet(context, controller),
+                            onPressed: () =>
+                                showPeriodFlowSheet(context, controller),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -181,7 +198,8 @@ class HomeScreen extends StatelessWidget {
                           child: PrimaryButton(
                             title: 'Daily log',
                             onPressed: () => shellNav.goToTab(2),
-                            backgroundColor: theme.colorScheme.secondaryContainer,
+                            backgroundColor:
+                                theme.colorScheme.secondaryContainer,
                             titleColor: theme.colorScheme.onSecondaryContainer,
                           ),
                         ),
@@ -205,12 +223,17 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               DecoratedBox(
                                 decoration: BoxDecoration(
-                                  color: AppColors.insightColor.withValues(alpha: 0.12),
+                                  color: AppColors.insightColor.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Icon(Icons.auto_awesome_outlined, color: AppColors.insightColor),
+                                  child: Icon(
+                                    Icons.auto_awesome_outlined,
+                                    color: AppColors.insightColor,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 14),
@@ -220,20 +243,26 @@ class HomeScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       'Insights',
-                                      style: theme.textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: theme.textTheme.titleSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       'Averages use your ${controller.avgCycleLength.value}-day cycle '
                                       'and last logged bleeding start.',
-                                      style: theme.textTheme.bodySmall,
+                                      style: AppTextStyle.bodyMedium.copyWith(
+                                        color: theme.colorScheme.onSurface,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Icon(Icons.chevron_right, color: theme.hintColor),
+                              Icon(
+                                Icons.chevron_right,
+                                color: theme.iconTheme.color,
+                              ),
                             ],
                           ),
                         ),
@@ -279,16 +308,10 @@ class _HeroHeader extends StatelessWidget {
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.primaryColor.withValues(alpha: theme.brightness == Brightness.dark ? 0.35 : 0.22),
-            theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            theme.colorScheme.surface,
-          ],
+        color: AppColors.insightColor.withValues(alpha: 0.08),
+        border: Border.all(
+          color: AppColors.insightColor.withValues(alpha: 0.2),
         ),
-        border: Border.all(color: AppColors.primaryColor.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,17 +319,23 @@ class _HeroHeader extends StatelessWidget {
           Text(
             'Hello',
             style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.hintColor,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.72),
               letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 4),
-          Text(dateLine, style: theme.textTheme.bodyMedium),
+          Text(
+            dateLine,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: 12),
           Text(
             headline,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
             ),
           ),
         ],
@@ -345,7 +374,7 @@ class _StatTile extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 22),
           const SizedBox(height: 10),
-          Text(label, style: theme.textTheme.labelSmall?.copyWith(color: theme.hintColor)),
+          Text(label, style: theme.textTheme.labelSmall),
           const SizedBox(height: 4),
           Text(
             value,
@@ -354,7 +383,12 @@ class _StatTile extends StatelessWidget {
               color: color,
             ),
           ),
-          Text(caption, style: theme.textTheme.bodySmall),
+          Text(
+            caption,
+            style: AppTextStyle.bodyMedium.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );

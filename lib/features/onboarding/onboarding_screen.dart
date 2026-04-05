@@ -1,5 +1,6 @@
 import 'package:cyra_ai_period_tracker/common/controllers/preference_controller.dart';
 import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
+import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/preference_labels.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:cyra_ai_period_tracker/widgets/primary_button.dart';
@@ -191,18 +192,11 @@ class _WelcomeOnboardingPage extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(28),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primaryColor.withValues(
-                      alpha: isDark ? 0.45 : 0.28,
-                    ),
-                    AppColors.gradientDownColor.withValues(
-                      alpha: isDark ? 0.35 : 1,
-                    ),
-                    theme.colorScheme.surface,
-                  ],
+                color: Color.alphaBlend(
+                  AppColors.primaryColor.withValues(
+                    alpha: isDark ? 0.16 : 0.12,
+                  ),
+                  theme.colorScheme.surface,
                 ),
                 border: Border.all(
                   color: AppColors.primaryColor.withValues(alpha: 0.18),
@@ -438,16 +432,9 @@ class _OnboardingStepShell extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              accentColor.withValues(alpha: isDark ? 0.35 : 0.2),
-              theme.colorScheme.surfaceContainerHighest.withValues(
-                alpha: isDark ? 0.4 : 0.65,
-              ),
-              theme.colorScheme.surface,
-            ],
+          color: Color.alphaBlend(
+            accentColor.withValues(alpha: isDark ? 0.18 : 0.14),
+            theme.colorScheme.surface,
           ),
           border: Border.all(color: accentColor.withValues(alpha: 0.22)),
           boxShadow: [
@@ -509,7 +496,10 @@ class _OnboardingStepShell extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   footerHint!,
-                  style: theme.textTheme.bodySmall?.copyWith(height: 1.35),
+                  style: AppTextStyle.bodyMedium.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    height: 1.35,
+                  ),
                 ),
               ],
             ],
@@ -787,7 +777,9 @@ class _RoundIconButton extends StatelessWidget {
           height: 52,
           child: Icon(
             icon,
-            color: enabled ? accentColor : theme.hintColor,
+            color: enabled
+                ? accentColor
+                : theme.colorScheme.onSurface.withValues(alpha: 0.38),
             size: 28,
           ),
         ),

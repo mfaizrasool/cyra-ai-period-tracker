@@ -1,5 +1,6 @@
 import 'package:cyra_ai_period_tracker/common/controllers/preference_controller.dart';
 import 'package:cyra_ai_period_tracker/core/services/reminder_notification_service.dart';
+import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/preference_labels.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
 import 'package:flutter/material.dart';
@@ -101,7 +102,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     child: Text(
                       'Local notifications on this device. Period reminders use your '
                       'next predicted date from the Home calendar. Daily log fires every day at 8:00 PM.',
-                      style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
+                      style: AppTextStyle.bodyMedium.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ],
@@ -125,7 +129,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
             title: const Text('Days before period'),
             subtitle: Text(
               '0 = same day as expected start',
-              style: theme.textTheme.bodySmall,
+              style: AppTextStyle.bodyMedium.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
             trailing: DropdownButton<int>(
               value: _daysBefore.clamp(0, 7),

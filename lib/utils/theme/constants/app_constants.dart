@@ -9,7 +9,6 @@ class AppColors {
   static const primaryColor = Color(0xFFF06292);
 
   static const greyColor = Color(0xFF9E8E96);
-  static const gradientDownColor = Color(0xFFFFF5F8);
 
   /// Cycle accents (kept distinct from primary for calendar / legend).
   static const periodColor = Color(0xFFFF5E8A);
