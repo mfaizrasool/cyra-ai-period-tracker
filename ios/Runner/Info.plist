@@ -54,6 +54,16 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<!-- image_picker: required by Apple if camera / photo library / microphone APIs are used (crash without these) -->
+	<key>NSCameraUsageDescription</key>
+	<string>Cyra needs camera access if you choose to attach a photo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cyra needs photo library access if you choose to attach images from your library.</string>
+	<!-- url_launcher: canLaunchUrl(mailto:) on iOS 9+ -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
