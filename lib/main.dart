@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cyra_ai_period_tracker/common/controllers/notification_setup.dart';
 import 'package:cyra_ai_period_tracker/common/controllers/preference_controller.dart';
+import 'package:cyra_ai_period_tracker/core/services/local_notifications_holder.dart';
 import 'package:cyra_ai_period_tracker/features/home/home_shell_screen.dart';
 import 'package:cyra_ai_period_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:cyra_ai_period_tracker/firebase_options.dart';
@@ -13,7 +14,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:get/get.dart';
+import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -30,8 +34,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
+Future<void> _configureLocalTimeZone() async {
+  tzdata.initializeTimeZones();
+  try {
+    final info = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(info.identifier));
+  } catch (_) {
+    tz.setLocalLocation(tz.getLocation('UTC'));
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _configureLocalTimeZone();
+  await LocalNotificationsHolder.initialize();
 
   try {
     await Firebase.initializeApp(

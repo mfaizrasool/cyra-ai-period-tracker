@@ -1,5 +1,6 @@
 import 'package:cyra_ai_period_tracker/common/controllers/preference_controller.dart';
 import 'package:cyra_ai_period_tracker/core/services/cycle_prediction_service.dart';
+import 'package:cyra_ai_period_tracker/core/services/reminder_notification_service.dart';
 import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
 import 'package:cyra_ai_period_tracker/data/db/app_database.dart';
 import 'package:cyra_ai_period_tracker/data/models/period_log.dart';
@@ -78,6 +79,7 @@ class CycleController extends GetxController {
     if (Get.isRegistered<InsightsController>()) {
       await Get.find<InsightsController>().load();
     }
+    await ReminderNotificationService.sync();
   }
 
   Future<void> logPeriodDay(DateTime date, int flowLevel) async {

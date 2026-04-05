@@ -1,4 +1,5 @@
 import 'package:cyra_ai_period_tracker/common/controllers/preference_controller.dart';
+import 'package:cyra_ai_period_tracker/core/services/reminder_notification_service.dart';
 import 'package:cyra_ai_period_tracker/data/db/app_database.dart';
 import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
 import 'package:cyra_ai_period_tracker/features/home/shell_nav_controller.dart';
@@ -13,6 +14,7 @@ class AppDataWipeService {
   AppDataWipeService._();
 
   static Future<void> wipeEverything() async {
+    await ReminderNotificationService.cancelAll();
     await AppDatabase.instance.closeAndDeleteDatabase();
 
     final prefs = Get.find<AppPreferencesController>();

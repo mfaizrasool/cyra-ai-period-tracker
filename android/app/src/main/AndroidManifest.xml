@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
        <!-- notifications permissions -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
     <application
         android:label="Cyra Ai Period Tracker"
