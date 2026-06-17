@@ -5,6 +5,7 @@ import 'package:cyra_ai_period_tracker/features/home/period_flow_sheet.dart';
 import 'package:cyra_ai_period_tracker/features/home/shell_nav_controller.dart';
 import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
+import 'package:cyra_ai_period_tracker/widgets/cycle_ring_widget.dart';
 import 'package:cyra_ai_period_tracker/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,11 +34,6 @@ class HomeScreen extends StatelessWidget {
           final periodBleedDay = controller.periodDayInBleeding.value;
           final ov = controller.ovulationDate.value;
           final today = dateOnly(DateTime.now());
-          final daysUntilOv = calendarDaysBetween(ov, today);
-
-          final headline = periodBleedDay != null
-              ? 'Period day $periodBleedDay'
-              : 'Cycle day $cycleDay';
 
           final phase = CyclePhaseInfo.resolve(
             today: today,
@@ -53,57 +49,35 @@ class HomeScreen extends StatelessWidget {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    child: _HeroHeader(
-                      headline: headline,
-                      dateLine: DateFormat(
-                        'EEEE, MMMM d',
-                      ).format(DateTime.now()),
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: Row(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: _StatTile(
-                            icon: Icons.water_drop_outlined,
-                            color: AppColors.periodColor,
-                            label: daysUntil > 0
-                                ? 'Next period'
-                                : daysUntil == 0
-                                ? 'Period'
-                                : 'Late',
-                            value: daysUntil > 0
-                                ? '$daysUntil d'
-                                : daysUntil == 0
-                                ? 'Today'
-                                : '${-daysUntil} d',
-                            caption: DateFormat('MMM d').format(nextDate),
+                        Text(
+                          DateFormat('EEEE, MMMM d').format(DateTime.now()),
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _StatTile(
-                            icon: Icons.bubble_chart_outlined,
-                            color: AppColors.ovulationColor,
-                            label: 'Ovulation',
-                            value: daysUntilOv > 0
-                                ? '$daysUntilOv d'
-                                : daysUntilOv == 0
-                                ? 'Today'
-                                : '—',
-                            caption: daysUntilOv < 0
-                                ? 'Passed'
-                                : DateFormat('MMM d').format(ov),
-                          ),
+                        const SizedBox(height: 20),
+                        CycleRingWidget(
+                          avgCycleLength: controller.avgCycleLength.value,
+                          avgPeriodLength: controller.avgPeriodLength.value,
+                          currentCycleDay: cycleDay,
+                          periodDayInBleeding: periodBleedDay,
+                          daysUntilNextPeriod: daysUntil,
+                          ovulationDate: ov,
+                          nextPeriodDate: nextDate,
+                          lastPeriodStartDate: controller.lastPeriodStartDate.value,
+                          fertileWindow: controller.fertileWindow.toList(),
+                          phase: phase,
+                          onLogPeriodTap: () => showPeriodFlowSheet(context, controller),
                         ),
                       ],
                     ),
                   ),
                 ),
+
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -294,106 +268,7 @@ Widget _homeLegendDot(Color color, String label) {
   );
 }
 
-class _HeroHeader extends StatelessWidget {
-  const _HeroHeader({required this.headline, required this.dateLine});
 
-  final String headline;
-  final String dateLine;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        color: AppColors.insightColor.withValues(alpha: 0.08),
-        border: Border.all(
-          color: AppColors.insightColor.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Hello',
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.72),
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            dateLine,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            headline,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatTile extends StatelessWidget {
-  const _StatTile({
-    required this.icon,
-    required this.color,
-    required this.label,
-    required this.value,
-    required this.caption,
-  });
-
-  final IconData icon;
-  final Color color;
-  final String label;
-  final String value;
-  final String caption;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: color.withValues(alpha: 0.08),
-        border: Border.all(color: color.withValues(alpha: 0.25)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 10),
-          Text(label, style: theme.textTheme.labelSmall),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          Text(
-            caption,
-            style: AppTextStyle.bodyMedium.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _PhaseTipCard extends StatelessWidget {
   const _PhaseTipCard({required this.phase});

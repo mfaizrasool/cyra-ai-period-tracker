@@ -2,6 +2,8 @@ import 'package:cyra_ai_period_tracker/features/home/cycle_controller.dart';
 import 'package:cyra_ai_period_tracker/features/insights/insights_controller.dart';
 import 'package:cyra_ai_period_tracker/utils/app_text_styles.dart';
 import 'package:cyra_ai_period_tracker/utils/theme/constants/app_constants.dart';
+import 'package:cyra_ai_period_tracker/widgets/pain_line_chart.dart';
+import 'package:cyra_ai_period_tracker/widgets/symptom_heatmap.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -134,7 +136,9 @@ class InsightsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
+                PainLineChart(dailyLogs: insights.dailyLogs.toList()),
+                const SizedBox(height: 20),
                 Text('Mood', style: theme.textTheme.titleSmall),
                 const SizedBox(height: 8),
                 if (insights.topMoods.isEmpty)
@@ -159,8 +163,12 @@ class InsightsScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 Text('Symptoms', style: theme.textTheme.titleSmall),
+                const SizedBox(height: 8),
+                SymptomHeatmap(dailyLogs: insights.dailyLogs.toList()),
+                const SizedBox(height: 20),
+                Text('Top symptoms frequency', style: theme.textTheme.titleSmall),
                 const SizedBox(height: 8),
                 if (insights.topSymptoms.isEmpty)
                   Card(

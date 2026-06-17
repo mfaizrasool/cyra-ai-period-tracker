@@ -2,12 +2,14 @@ import 'dart:math' as math;
 
 import 'package:cyra_ai_period_tracker/core/utils/date_utils.dart';
 import 'package:cyra_ai_period_tracker/data/db/app_database.dart';
+import 'package:cyra_ai_period_tracker/data/models/daily_log.dart';
 import 'package:cyra_ai_period_tracker/data/models/period_log.dart';
 import 'package:get/get.dart';
 
 class InsightsController extends GetxController {
   final AppDatabase _db = AppDatabase.instance;
 
+  final RxList<DailyLog> dailyLogs = <DailyLog>[].obs;
   final RxString regularityLabel = ''.obs;
   final RxList<String> topSymptoms = <String>[].obs;
   final RxList<String> topMoods = <String>[].obs;
@@ -25,6 +27,7 @@ class InsightsController extends GetxController {
 
   Future<void> load() async {
     final daily = await _db.getAllDailyLogs();
+    dailyLogs.assignAll(daily);
     final counts = <String, int>{};
     for (final row in daily) {
       if (row.symptoms.isEmpty) continue;
