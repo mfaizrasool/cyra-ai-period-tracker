@@ -49,8 +49,8 @@ class ReminderNotificationService {
 
   /// Clears Cyra reminder notifications (not FCM).
   static Future<void> cancelAll() async {
-    await LocalNotificationsHolder.plugin.cancel(_idPeriod);
-    await LocalNotificationsHolder.plugin.cancel(_idDailyLog);
+    await LocalNotificationsHolder.plugin.cancel(id: _idPeriod);
+    await LocalNotificationsHolder.plugin.cancel(id: _idDailyLog);
   }
 
   /// Re-reads prefs and [CycleController] (if registered) and updates schedules.
@@ -68,8 +68,8 @@ class ReminderNotificationService {
           await prefs.getString(key: AppPreferenceLabels.reminderDaysBeforePeriod);
       final daysBefore = (int.tryParse(daysStr) ?? 2).clamp(0, 7);
 
-      await LocalNotificationsHolder.plugin.cancel(_idPeriod);
-      await LocalNotificationsHolder.plugin.cancel(_idDailyLog);
+      await LocalNotificationsHolder.plugin.cancel(id: _idPeriod);
+      await LocalNotificationsHolder.plugin.cancel(id: _idDailyLog);
 
       if (periodEnabled && Get.isRegistered<CycleController>()) {
         await _schedulePeriodReminder(
@@ -124,13 +124,13 @@ class ReminderNotificationService {
           ),
         );
         await LocalNotificationsHolder.plugin.zonedSchedule(
-          _idPeriod,
-          'Period reminder',
-          daysBefore == 0
+          id: _idPeriod,
+          title: 'Period reminder',
+          body: daysBefore == 0
               ? 'Your next period is expected around $pretty. Open Cyra to log or check your calendar.'
               : 'About $daysBefore day(s) before your expected period ($pretty). Open Cyra to review.',
-          tzDate,
-          details,
+          scheduledDate: tzDate,
+          notificationDetails: details,
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         );
         return;
@@ -167,11 +167,11 @@ class ReminderNotificationService {
       ),
     );
     await LocalNotificationsHolder.plugin.zonedSchedule(
-      _idDailyLog,
-      'Daily log',
-      'Take a moment to log symptoms and mood in Cyra.',
-      scheduled,
-      details,
+      id: _idDailyLog,
+      title: 'Daily log',
+      body: 'Take a moment to log symptoms and mood in Cyra.',
+      scheduledDate: scheduled,
+      notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );

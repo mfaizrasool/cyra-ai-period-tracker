@@ -39,7 +39,7 @@ class LocalNotificationsHolder {
     );
 
     await plugin.initialize(
-      settings,
+      settings: settings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         if (kDebugMode) print('Notification tapped: ${response.payload}');
         try {

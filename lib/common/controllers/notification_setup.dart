@@ -107,10 +107,10 @@ class NotificationSetup {
 
     try {
       await _localNotificationsPlugin.show(
-        0,
-        title,
-        body,
-        details,
+        id: 0,
+        title: title,
+        body: body,
+        notificationDetails: details,
         payload: jsonEncode(data),
       );
       if (kDebugMode) print('Notification shown successfully');
